@@ -3,6 +3,7 @@
 class Terminal
 {
     private static $width;
+    
     private static $height;
 
     /**

@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__.'/HelperSet.php';
+
+require_once __DIR__ . '/HelperSet.php';
+
 /**
  * HelperInterface is the interface all helpers must implement.
  */
@@ -7,6 +9,7 @@ interface HelperInterface
 {
     /**
      * Sets the helper set associated with this helper.
+     * @param HelperSet|null $helperSet
      */
     public function setHelperSet(HelperSet $helperSet = null);
 

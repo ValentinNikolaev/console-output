@@ -31,6 +31,16 @@ class TableStyle
     private $padType = STR_PAD_RIGHT;
 
     /**
+     * Gets padding character, used for cell padding.
+     *
+     * @return string
+     */
+    public function getPaddingChar()
+    {
+        return $this->paddingChar;
+    }
+
+    /**
      * Sets padding character, used for cell padding.
      *
      * @param string $paddingChar
@@ -44,41 +54,6 @@ class TableStyle
         }
 
         $this->paddingChar = $paddingChar;
-
-        return $this;
-    }
-
-    /**
-     * Gets padding character, used for cell padding.
-     *
-     * @return string
-     */
-    public function getPaddingChar()
-    {
-        return $this->paddingChar;
-    }
-
-    /**
-     * Sets horizontal border characters.
-     *
-     * <code>
-     * ╔═══════════════╤══════════════════════════╤══════════════════╗
-     * 1 ISBN          2 Title                    │ Author           ║
-     * ╠═══════════════╪══════════════════════════╪══════════════════╣
-     * ║ 99921-58-10-7 │ Divine Comedy            │ Dante Alighieri  ║
-     * ║ 9971-5-0210-0 │ A Tale of Two Cities     │ Charles Dickens  ║
-     * ║ 960-425-059-0 │ The Lord of the Rings    │ J. R. R. Tolkien ║
-     * ║ 80-902734-1-6 │ And Then There Were None │ Agatha Christie  ║
-     * ╚═══════════════╧══════════════════════════╧══════════════════╝
-     * </code>
-     *
-     * @param string      $outside Outside border char (see #1 of example)
-     * @param string|null $inside  Inside border char (see #2 of example), equals $outside if null
-     */
-    public function setHorizontalBorderChars($outside, $inside = null)
-    {
-        $this->horizontalOutsideBorderChar = $outside;
-        $this->horizontalInsideBorderChar = !empty($inside) ? $inside : $outside;
 
         return $this;
     }
@@ -100,6 +75,33 @@ class TableStyle
     }
 
     /**
+     * Sets horizontal border characters.
+     *
+     * <code>
+     * ╔═══════════════╤══════════════════════════╤══════════════════╗
+     * 1 ISBN          2 Title                    │ Author           ║
+     * ╠═══════════════╪══════════════════════════╪══════════════════╣
+     * ║ 99921-58-10-7 │ Divine Comedy            │ Dante Alighieri  ║
+     * ║ 9971-5-0210-0 │ A Tale of Two Cities     │ Charles Dickens  ║
+     * ║ 960-425-059-0 │ The Lord of the Rings    │ J. R. R. Tolkien ║
+     * ║ 80-902734-1-6 │ And Then There Were None │ Agatha Christie  ║
+     * ╚═══════════════╧══════════════════════════╧══════════════════╝
+     * </code>
+     *
+     * @param string $outside Outside border char (see #1 of example)
+     * @param string|null $inside Inside border char (see #2 of example), equals $outside if null
+     *
+     * @return TableStyle
+     */
+    public function setHorizontalBorderChars($outside, $inside = null)
+    {
+        $this->horizontalOutsideBorderChar = $outside;
+        $this->horizontalInsideBorderChar = !empty($inside) ? $inside : $outside;
+
+        return $this;
+    }
+
+    /**
      * Gets horizontal border character.
      *
      * @return string
@@ -111,6 +113,22 @@ class TableStyle
         @trigger_error(sprintf('The "%s()" method is deprecated since Symfony 4.1, use getBorderChars() instead.', __METHOD__), E_USER_DEPRECATED);
 
         return $this->horizontalOutsideBorderChar;
+    }
+
+    /**
+     * Sets vertical border character.
+     *
+     * @param string $verticalBorderChar
+     *
+     * @return $this
+     *
+     * @deprecated since Symfony 4.1, use {@link setVerticalBorderChars()} instead.
+     */
+    public function setVerticalBorderChar($verticalBorderChar)
+    {
+        @trigger_error(sprintf('The "%s()" method is deprecated since Symfony 4.1, use setVerticalBorderChars() instead.', __METHOD__), E_USER_DEPRECATED);
+
+        return $this->setVerticalBorderChars($verticalBorderChar, $verticalBorderChar);
     }
 
     /**
@@ -128,8 +146,10 @@ class TableStyle
      * ╚═══════════════╧══════════════════════════╧══════════════════╝
      * </code>
      *
-     * @param string      $outside Outside border char (see #1 of example)
-     * @param string|null $inside  Inside border char (see #2 of example), equals $outside if null
+     * @param string $outside Outside border char (see #1 of example)
+     * @param string|null $inside Inside border char (see #2 of example), equals $outside if null
+     *
+     * @return TableStyle
      */
     public function setVerticalBorderChars($outside, $inside = null)
     {
@@ -137,22 +157,6 @@ class TableStyle
         $this->verticalInsideBorderChar = !empty($inside) ? $inside : $outside;
 
         return $this;
-    }
-
-    /**
-     * Sets vertical border character.
-     *
-     * @param string $verticalBorderChar
-     *
-     * @return $this
-     *
-     * @deprecated since Symfony 4.1, use {@link setVerticalBorderChars()} instead.
-     */
-    public function setVerticalBorderChar($verticalBorderChar)
-    {
-        @trigger_error(sprintf('The "%s()" method is deprecated since Symfony 4.1, use setVerticalBorderChars() instead.', __METHOD__), E_USER_DEPRECATED);
-
-        return $this->setVerticalBorderChars($verticalBorderChar, $verticalBorderChar);
     }
 
     /**
@@ -185,63 +189,13 @@ class TableStyle
     }
 
     /**
-     * Sets crossing characters.
+     * Gets crossing character.
      *
-     * Example:
-     * <code>
-     * 1═══════════════2══════════════════════════2══════════════════3
-     * ║ ISBN          │ Title                    │ Author           ║
-     * 8'══════════════0'═════════════════════════0'═════════════════4'
-     * ║ 99921-58-10-7 │ Divine Comedy            │ Dante Alighieri  ║
-     * ║ 9971-5-0210-0 │ A Tale of Two Cities     │ Charles Dickens  ║
-     * 8───────────────0──────────────────────────0──────────────────4
-     * ║ 960-425-059-0 │ The Lord of the Rings    │ J. R. R. Tolkien ║
-     * ║ 80-902734-1-6 │ And Then There Were None │ Agatha Christie  ║
-     * 7═══════════════6══════════════════════════6══════════════════5
-     * </code>
-     *
-     * @param string      $cross          Crossing char (see #0 of example)
-     * @param string      $topLeft        Top left char (see #1 of example)
-     * @param string      $topMid         Top mid char (see #2 of example)
-     * @param string      $topRight       Top right char (see #3 of example)
-     * @param string      $midRight       Mid right char (see #4 of example)
-     * @param string      $bottomRight    Bottom right char (see #5 of example)
-     * @param string      $bottomMid      Bottom mid char (see #6 of example)
-     * @param string      $bottomLeft     Bottom left char (see #7 of example)
-     * @param string      $midLeft        Mid left char (see #8 of example)
-     * @param string|null $topLeftBottom  Top left bottom char (see #8' of example), equals to $midLeft if null
-     * @param string|null $topMidBottom   Top mid bottom char (see #0' of example), equals to $cross if null
-     * @param string|null $topRightBottom Top right bottom char (see #4' of example), equals to $midRight if null
+     * @return string
      */
-    public function setCrossingChars($cross, $topLeft, $topMid, $topRight, $midRight, $bottomRight, $bottomMid, $bottomLeft, $midLeft, $topLeftBottom = null, $topMidBottom = null, $topRightBottom = null)
+    public function getCrossingChar()
     {
-        $this->crossingChar = $cross;
-        $this->crossingTopLeftChar = $topLeft;
-        $this->crossingTopMidChar = $topMid;
-        $this->crossingTopRightChar = $topRight;
-        $this->crossingMidRightChar = $midRight;
-        $this->crossingBottomRightChar = $bottomRight;
-        $this->crossingBottomMidChar = $bottomMid;
-        $this->crossingBottomLeftChar = $bottomLeft;
-        $this->crossingMidLeftChar = $midLeft;
-        $this->crossingTopLeftBottomChar = !empty($topLeftBottom) ? $topLeftBottom : $midLeft;
-        $this->crossingTopMidBottomChar = !empty($topMidBottom) ? $topMidBottom : $cross;
-        $this->crossingTopRightBottomChar = !empty($topRightBottom) ? $topRightBottom : $midRight;
-
-        return $this;
-    }
-
-    /**
-     * Sets default crossing character used for each cross.
-     *
-     * @see {@link setCrossingChars()} for setting each crossing individually.
-     * @param string $char
-     *
-     * @return TableStyle
-     */
-    public function setDefaultCrossingChar($char)
-    {
-        return $this->setCrossingChars($char, $char, $char, $char, $char, $char, $char, $char, $char);
+        return $this->crossingChar;
     }
 
     /**
@@ -261,13 +215,65 @@ class TableStyle
     }
 
     /**
-     * Gets crossing character.
+     * Sets default crossing character used for each cross.
      *
-     * @return string
+     * @see {@link setCrossingChars()} for setting each crossing individually.
+     * @param string $char
+     *
+     * @return TableStyle
      */
-    public function getCrossingChar()
+    public function setDefaultCrossingChar($char)
     {
-        return $this->crossingChar;
+        return $this->setCrossingChars($char, $char, $char, $char, $char, $char, $char, $char, $char);
+    }
+
+    /**
+     * Sets crossing characters.
+     *
+     * Example:
+     * <code>
+     * 1═══════════════2══════════════════════════2══════════════════3
+     * ║ ISBN          │ Title                    │ Author           ║
+     * 8'══════════════0'═════════════════════════0'═════════════════4'
+     * ║ 99921-58-10-7 │ Divine Comedy            │ Dante Alighieri  ║
+     * ║ 9971-5-0210-0 │ A Tale of Two Cities     │ Charles Dickens  ║
+     * 8───────────────0──────────────────────────0──────────────────4
+     * ║ 960-425-059-0 │ The Lord of the Rings    │ J. R. R. Tolkien ║
+     * ║ 80-902734-1-6 │ And Then There Were None │ Agatha Christie  ║
+     * 7═══════════════6══════════════════════════6══════════════════5
+     * </code>
+     *
+     * @param string $cross Crossing char (see #0 of example)
+     * @param string $topLeft Top left char (see #1 of example)
+     * @param string $topMid Top mid char (see #2 of example)
+     * @param string $topRight Top right char (see #3 of example)
+     * @param string $midRight Mid right char (see #4 of example)
+     * @param string $bottomRight Bottom right char (see #5 of example)
+     * @param string $bottomMid Bottom mid char (see #6 of example)
+     * @param string $bottomLeft Bottom left char (see #7 of example)
+     * @param string $midLeft Mid left char (see #8 of example)
+     * @param string|null $topLeftBottom Top left bottom char (see #8' of example), equals to $midLeft if null
+     * @param string|null $topMidBottom Top mid bottom char (see #0' of example), equals to $cross if null
+     * @param string|null $topRightBottom Top right bottom char (see #4' of example), equals to $midRight if null
+     *
+     * @return TableStyle
+     */
+    public function setCrossingChars($cross, $topLeft, $topMid, $topRight, $midRight, $bottomRight, $bottomMid, $bottomLeft, $midLeft, $topLeftBottom = null, $topMidBottom = null, $topRightBottom = null)
+    {
+        $this->crossingChar = $cross;
+        $this->crossingTopLeftChar = $topLeft;
+        $this->crossingTopMidChar = $topMid;
+        $this->crossingTopRightChar = $topRight;
+        $this->crossingMidRightChar = $midRight;
+        $this->crossingBottomRightChar = $bottomRight;
+        $this->crossingBottomMidChar = $bottomMid;
+        $this->crossingBottomLeftChar = $bottomLeft;
+        $this->crossingMidLeftChar = $midLeft;
+        $this->crossingTopLeftBottomChar = !empty($topLeftBottom) ? $topLeftBottom : $midLeft;
+        $this->crossingTopMidBottomChar = !empty($topMidBottom) ? $topMidBottom : $cross;
+        $this->crossingTopRightBottomChar = !empty($topRightBottom) ? $topRightBottom : $midRight;
+
+        return $this;
     }
 
     /**
@@ -294,6 +300,16 @@ class TableStyle
     }
 
     /**
+     * Gets header cell format.
+     *
+     * @return string
+     */
+    public function getCellHeaderFormat()
+    {
+        return $this->cellHeaderFormat;
+    }
+
+    /**
      * Sets header cell format.
      *
      * @param string $cellHeaderFormat
@@ -308,13 +324,13 @@ class TableStyle
     }
 
     /**
-     * Gets header cell format.
+     * Gets row cell format.
      *
      * @return string
      */
-    public function getCellHeaderFormat()
+    public function getCellRowFormat()
     {
-        return $this->cellHeaderFormat;
+        return $this->cellRowFormat;
     }
 
     /**
@@ -332,13 +348,13 @@ class TableStyle
     }
 
     /**
-     * Gets row cell format.
+     * Gets row cell content format.
      *
      * @return string
      */
-    public function getCellRowFormat()
+    public function getCellRowContentFormat()
     {
-        return $this->cellRowFormat;
+        return $this->cellRowContentFormat;
     }
 
     /**
@@ -356,13 +372,13 @@ class TableStyle
     }
 
     /**
-     * Gets row cell content format.
+     * Gets table border format.
      *
      * @return string
      */
-    public function getCellRowContentFormat()
+    public function getBorderFormat()
     {
-        return $this->cellRowContentFormat;
+        return $this->borderFormat;
     }
 
     /**
@@ -380,13 +396,13 @@ class TableStyle
     }
 
     /**
-     * Gets table border format.
+     * Gets cell padding type.
      *
-     * @return string
+     * @return int
      */
-    public function getBorderFormat()
+    public function getPadType()
     {
-        return $this->borderFormat;
+        return $this->padType;
     }
 
     /**
@@ -405,16 +421,6 @@ class TableStyle
         $this->padType = $padType;
 
         return $this;
-    }
-
-    /**
-     * Gets cell padding type.
-     *
-     * @return int
-     */
-    public function getPadType()
-    {
-        return $this->padType;
     }
 
     public function getHeaderTitleFormat()
@@ -441,6 +447,7 @@ class TableStyle
 
     /**
      * @param string $format
+     *
      * @return TableStyle
      *
      */

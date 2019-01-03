@@ -1,8 +1,9 @@
 <?php
-require_once __DIR__.'/Output.php';
+
+require_once __DIR__ . '/Output.php';
 
 /**
- * @author Jean-François Simon <contact@jfsimon.fr>
+ * Class BufferedOutput
  */
 class BufferedOutput extends Output
 {
@@ -22,7 +23,8 @@ class BufferedOutput extends Output
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $message
+     * @param bool $newline
      */
     protected function doWrite($message, $newline)
     {

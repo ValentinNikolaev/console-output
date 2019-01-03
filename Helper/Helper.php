@@ -1,52 +1,23 @@
 <?php
 
-require_once __DIR__.'/../Formatter/OutputFormatterInterface.php';
-require_once __DIR__.'/HelperInterface.php';
+require_once __DIR__ . '/../Formatter/OutputFormatterInterface.php';
+require_once __DIR__ . '/HelperInterface.php';
 
 /**
  * Helper is the base class for all helper classes.
  */
 abstract class Helper implements HelperInterface
 {
+    /**
+     * @var HelperSet|null
+     */
     protected $helperSet = null;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setHelperSet(HelperSet $helperSet = null)
-    {
-        $this->helperSet = $helperSet;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHelperSet()
-    {
-        return $this->helperSet;
-    }
-
-    /**
-     * Returns the length of a string, using mb_strwidth if it is available.
-     *
-     * @param string $string The string to check its length
-     *
-     * @return int The length of the string
-     */
-    public static function strlen($string)
-    {
-        if (false === $encoding = mb_detect_encoding($string, null, true)) {
-            return \strlen($string);
-        }
-
-        return mb_strwidth($string, $encoding);
-    }
 
     /**
      * Returns the subset of a string, using mb_substr if it is available.
      *
-     * @param string   $string String to subset
-     * @param int      $from   Start offset
+     * @param string $string String to subset
+     * @param int $from Start offset
      * @param int|null $length Length to read
      *
      * @return string The string subset
@@ -60,6 +31,11 @@ abstract class Helper implements HelperInterface
         return mb_substr($string, $from, $length, $encoding);
     }
 
+    /**
+     * @param $secs
+     *
+     * @return string
+     */
     public static function formatTime($secs)
     {
         static $timeFormats = array(
@@ -83,12 +59,17 @@ abstract class Helper implements HelperInterface
                         return $format[1];
                     }
 
-                    return floor($secs / $format[2]).' '.$format[1];
+                    return floor($secs / $format[2]) . ' ' . $format[1];
                 }
             }
         }
     }
 
+    /**
+     * @param $memory
+     *
+     * @return string
+     */
     public static function formatMemory($memory)
     {
         if ($memory >= 1024 * 1024 * 1024) {
@@ -106,11 +87,39 @@ abstract class Helper implements HelperInterface
         return sprintf('%d B', $memory);
     }
 
+    /**
+     * @param OutputFormatterInterface $formatter
+     * @param $string
+     *
+     * @return int
+     */
     public static function strlenWithoutDecoration(OutputFormatterInterface $formatter, $string)
     {
         return self::strlen(self::removeDecoration($formatter, $string));
     }
 
+    /**
+     * Returns the length of a string, using mb_strwidth if it is available.
+     *
+     * @param string $string The string to check its length
+     *
+     * @return int The length of the string
+     */
+    public static function strlen($string)
+    {
+        if (false === $encoding = mb_detect_encoding($string, null, true)) {
+            return \strlen($string);
+        }
+
+        return mb_strwidth($string, $encoding);
+    }
+
+    /**
+     * @param OutputFormatterInterface $formatter
+     * @param $string
+     *
+     * @return string|string[]|null
+     */
     public static function removeDecoration(OutputFormatterInterface $formatter, $string)
     {
         $isDecorated = $formatter->isDecorated();
@@ -122,5 +131,21 @@ abstract class Helper implements HelperInterface
         $formatter->setDecorated($isDecorated);
 
         return $string;
+    }
+
+    /**
+     * @return HelperSet|null
+     */
+    public function getHelperSet()
+    {
+        return $this->helperSet;
+    }
+
+    /**
+     * @param HelperSet|null $helperSet
+     */
+    public function setHelperSet(HelperSet $helperSet = null)
+    {
+        $this->helperSet = $helperSet;
     }
 }

@@ -21,6 +21,7 @@ interface SimpleStyleInterface
 
     /**
      * Formats a list.
+     * @param array $elements
      */
     public function listing(array $elements);
 
@@ -68,8 +69,11 @@ interface SimpleStyleInterface
 
     /**
      * Formats a table.
+     * @param array $headers
+     * @param array $rows
      */
     public function table(array $headers, array $rows);
+
     /**
      * Add newline(s).
      *

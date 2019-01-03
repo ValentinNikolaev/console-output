@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * Class TableRows
  * @internal
  */
 class TableRows implements \IteratorAggregate

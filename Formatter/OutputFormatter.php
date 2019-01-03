@@ -1,15 +1,28 @@
 <?php
-require_once __DIR__.'/WrappableOutputFormatterInterface.php';
-require_once __DIR__.'/OutputFormatterStyle.php';
-require_once __DIR__.'/OutputFormatterStyleStack.php';
+
+require_once __DIR__ . '/WrappableOutputFormatterInterface.php';
+require_once __DIR__ . '/OutputFormatterStyle.php';
+require_once __DIR__ . '/OutputFormatterStyleStack.php';
+require_once __DIR__ . '/OutputFormatterStyleInterface.php';
 
 /**
  * Formatter class for console output.
  */
 class OutputFormatter implements WrappableOutputFormatterInterface
 {
+    /**
+     * @var bool
+     */
     private $decorated;
+
+    /**
+     * @var array
+     */
     private $styles = array();
+
+    /**
+     * @var OutputFormatterStyleStack
+     */
     private $styleStack;
 
     /**
@@ -50,8 +63,8 @@ class OutputFormatter implements WrappableOutputFormatterInterface
     /**
      * Initializes console output formatter.
      *
-     * @param bool                            $decorated Whether this formatter should actually decorate strings
-     * @param OutputFormatterStyleInterface[] $styles    Array of "name => FormatterStyle" instances
+     * @param bool $decorated Whether this formatter should actually decorate strings
+     * @param OutputFormatterStyleInterface[] $styles Array of "name => FormatterStyle" instances
      */
     public function __construct($decorated = false, array $styles = array())
     {
@@ -70,15 +83,15 @@ class OutputFormatter implements WrappableOutputFormatterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param bool $decorated
      */
     public function setDecorated($decorated)
     {
-        $this->decorated = (bool) $decorated;
+        $this->decorated = (bool)$decorated;
     }
 
     /**
-     * {@inheritdoc}
+     * @return bool
      */
     public function isDecorated()
     {
@@ -86,7 +99,9 @@ class OutputFormatter implements WrappableOutputFormatterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $name
+     *
+     * @param OutputFormatterStyleInterface $style
      */
     public function setStyle($name, OutputFormatterStyleInterface $style)
     {
@@ -94,7 +109,9 @@ class OutputFormatter implements WrappableOutputFormatterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $name
+     *
+     * @return bool
      */
     public function hasStyle($name)
     {
@@ -102,7 +119,9 @@ class OutputFormatter implements WrappableOutputFormatterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $name
+     *
+     * @return mixed|OutputFormatterStyleInterface
      */
     public function getStyle($name)
     {
@@ -114,15 +133,20 @@ class OutputFormatter implements WrappableOutputFormatterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $message
+     *
+     * @return mixed|string
      */
     public function format($message)
     {
-        return $this->formatAndWrap((string) $message, 0);
+        return $this->formatAndWrap((string)$message, 0);
     }
 
     /**
-     * {@inheritdoc}
+     * @param $message
+     * @param $width
+     *
+     * @return mixed|string
      */
     public function formatAndWrap($message, $width)
     {
@@ -243,18 +267,18 @@ class OutputFormatter implements WrappableOutputFormatterInterface
         }
 
         if ($currentLineLength) {
-            $prefix = substr($text, 0, $i = $width - $currentLineLength)."\n";
+            $prefix = substr($text, 0, $i = $width - $currentLineLength) . "\n";
             $text = substr($text, $i);
         } else {
             $prefix = '';
         }
 
         preg_match('~(\\n)$~', $text, $matches);
-        $text = $prefix.preg_replace('~([^\\n]{'.$width.'})\\ *~', "\$1\n", $text);
-        $text = rtrim($text, "\n").($matches[1] ? $matches[1] : '');
+        $text = $prefix . preg_replace('~([^\\n]{' . $width . '})\\ *~', "\$1\n", $text);
+        $text = rtrim($text, "\n") . ($matches[1] ? $matches[1] : '');
 
         if (!$currentLineLength && '' !== $current && "\n" !== substr($current, -1)) {
-            $text = "\n".$text;
+            $text = "\n" . $text;
         }
 
         $lines = explode("\n", $text);

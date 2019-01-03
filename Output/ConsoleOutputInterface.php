@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__.'/OutputInterface.php';
+
+require_once __DIR__ . '/OutputInterface.php';
 
 /**
  * ConsoleOutputInterface is the interface implemented by ConsoleOutput class.

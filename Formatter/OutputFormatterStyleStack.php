@@ -1,5 +1,11 @@
 <?php
 
+require_once __DIR__.'/OutputFormatterStyleInterface.php';
+require_once __DIR__.'/OutputFormatterStyle.php';
+
+/**
+ * Class OutputFormatterStyleStack
+ */
 class OutputFormatterStyleStack
 {
     /**

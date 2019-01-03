@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/OutputFormatterStyleInterface.php';
+require_once __DIR__ . '/OutputFormatterStyleInterface.php';
 
 /**
  * Formatter style class for defining styles.
@@ -48,7 +48,7 @@ class OutputFormatterStyle implements OutputFormatterStyleInterface
      *
      * @param string|null $foreground The style foreground color name
      * @param string|null $background The style background color name
-     * @param array       $options    The style options
+     * @param array $options The style options
      */
     public function __construct($foreground = null, $background = null, array $options = array())
     {
@@ -153,7 +153,7 @@ class OutputFormatterStyle implements OutputFormatterStyleInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param array $options
      */
     public function setOptions(array $options)
     {

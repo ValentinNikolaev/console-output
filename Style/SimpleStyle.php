@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__.'/../Formatter/OutputFormatterInterface.php';
-require_once __DIR__.'/../Output/ConsoleOutputInterface.php';
-require_once __DIR__.'/SimpleStyleInterface.php';
+require_once __DIR__ . '/../Formatter/OutputFormatterInterface.php';
+require_once __DIR__ . '/../Output/ConsoleOutputInterface.php';
+require_once __DIR__ . '/SimpleStyleInterface.php';
 
 /**
  * Decorates output to add console style guide helpers.

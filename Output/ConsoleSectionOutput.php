@@ -1,8 +1,9 @@
 <?php
-require_once __DIR__.'/../Formatter/OutputFormatterInterface.php';
-require_once __DIR__.'/../Terminal.php';
-require_once __DIR__.'/../Helper/Helper.php';
-require_once __DIR__.'/StreamOutput.php';
+
+require_once __DIR__ . '/../Formatter/OutputFormatterInterface.php';
+require_once __DIR__ . '/../Terminal.php';
+require_once __DIR__ . '/../Helper/Helper.php';
+require_once __DIR__ . '/StreamOutput.php';
 
 class ConsoleSectionOutput extends StreamOutput
 {
@@ -12,8 +13,11 @@ class ConsoleSectionOutput extends StreamOutput
     private $terminal;
 
     /**
-     * @param resource               $stream
+     * @param resource $stream
      * @param ConsoleSectionOutput[] $sections
+     * @param $verbosity
+     * @param $decorated
+     * @param OutputFormatterInterface $formatter
      */
     public function __construct($stream, array &$sections, $verbosity, $decorated, OutputFormatterInterface $formatter)
     {
@@ -21,6 +25,17 @@ class ConsoleSectionOutput extends StreamOutput
         array_unshift($sections, $this);
         $this->sections = &$sections;
         $this->terminal = new Terminal();
+    }
+
+    /**
+     * Overwrites the previous output with a new message.
+     *
+     * @param array|string $message
+     */
+    public function overwrite($message)
+    {
+        $this->clear();
+        $this->writeln($message);
     }
 
     /**
@@ -47,56 +62,12 @@ class ConsoleSectionOutput extends StreamOutput
     }
 
     /**
-     * Overwrites the previous output with a new message.
-     *
-     * @param array|string $message
-     */
-    public function overwrite($message)
-    {
-        $this->clear();
-        $this->writeln($message);
-    }
-
-    /**
-     * @return string
-     */
-    public function getContent()
-    {
-        return implode('', $this->content);
-    }
-
-    /**
-     * @internal
-     */
-    public function addContent($input)
-    {
-        foreach (explode(PHP_EOL, $input) as $lineContent) {
-            $this->lines += ceil($this->getDisplayLength($lineContent) / $this->terminal->getWidth()) ?: 1;
-            $this->content[] = $lineContent;
-            $this->content[] = PHP_EOL;
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doWrite($message, $newline)
-    {
-        if (!$this->isDecorated()) {
-            return parent::doWrite($message, $newline);
-        }
-
-        $erasedContent = $this->popStreamContentUntilCurrentSection();
-
-        $this->addContent($message);
-
-        parent::doWrite($message, true);
-        parent::doWrite($erasedContent, false);
-    }
-
-    /**
      * At initial stage, cursor is at the end of stream output. This method makes cursor crawl upwards until it hits
      * current section. Then it erases content it crawled through. Optionally, it erases part of current section too.
+     *
+     * @param int $numberOfLinesToClearFromCurrentSection
+     *
+     * @return string
      */
     private function popStreamContentUntilCurrentSection($numberOfLinesToClearFromCurrentSection = 0)
     {
@@ -120,6 +91,44 @@ class ConsoleSectionOutput extends StreamOutput
         }
 
         return implode('', array_reverse($erasedContent));
+    }
+
+    /**
+     * @return string
+     */
+    public function getContent()
+    {
+        return implode('', $this->content);
+    }
+
+    /**
+     * @param string $message
+     * @param bool $newline
+     */
+    protected function doWrite($message, $newline)
+    {
+        if (!$this->isDecorated()) {
+            return parent::doWrite($message, $newline);
+        }
+
+        $erasedContent = $this->popStreamContentUntilCurrentSection();
+
+        $this->addContent($message);
+
+        parent::doWrite($message, true);
+        parent::doWrite($erasedContent, false);
+    }
+
+    /**
+     * @param $input
+     */
+    public function addContent($input)
+    {
+        foreach (explode(PHP_EOL, $input) as $lineContent) {
+            $this->lines += ceil($this->getDisplayLength($lineContent) / $this->terminal->getWidth()) ?: 1;
+            $this->content[] = $lineContent;
+            $this->content[] = PHP_EOL;
+        }
     }
 
     /**

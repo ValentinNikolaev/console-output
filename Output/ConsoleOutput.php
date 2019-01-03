@@ -1,7 +1,8 @@
 <?php
-require_once __DIR__.'/../Formatter/OutputFormatterInterface.php';
-require_once __DIR__.'/StreamOutput.php';
-require_once __DIR__.'/ConsoleOutputInterface.php';
+
+require_once __DIR__ . '/../Formatter/OutputFormatterInterface.php';
+require_once __DIR__ . '/StreamOutput.php';
+require_once __DIR__ . '/ConsoleOutputInterface.php';
 
 /**
  * ConsoleOutput is the default class for all CLI output. It uses STDOUT and STDERR.
@@ -22,8 +23,8 @@ class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
     private $consoleSectionOutputs = array();
 
     /**
-     * @param int                           $verbosity The verbosity level (one of the VERBOSITY constants in OutputInterface)
-     * @param bool|null                     $decorated Whether to decorate messages (null for auto-guessing)
+     * @param int $verbosity The verbosity level (one of the VERBOSITY constants in OutputInterface)
+     * @param bool|null $decorated Whether to decorate messages (null for auto-guessing)
      * @param OutputFormatterInterface|null $formatter Output formatter instance (null to use default OutputFormatter)
      */
     public function __construct($verbosity = self::VERBOSITY_NORMAL, $decorated = null, OutputFormatterInterface $formatter = null)
@@ -39,54 +40,15 @@ class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
     }
 
     /**
-     * Creates a new output section.
+     * @return resource
      */
-    public function section()
+    private function openOutputStream()
     {
-        return new ConsoleSectionOutput($this->getStream(), $this->consoleSectionOutputs, $this->getVerbosity(), $this->isDecorated(), $this->getFormatter());
-    }
+        if (!$this->hasStdoutSupport()) {
+            return fopen('php://output', 'w');
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDecorated($decorated)
-    {
-        parent::setDecorated($decorated);
-        $this->stderr->setDecorated($decorated);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setFormatter(OutputFormatterInterface $formatter)
-    {
-        parent::setFormatter($formatter);
-        $this->stderr->setFormatter($formatter);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setVerbosity($level)
-    {
-        parent::setVerbosity($level);
-        $this->stderr->setVerbosity($level);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getErrorOutput()
-    {
-        return $this->stderr;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setErrorOutput(OutputInterface $error)
-    {
-        $this->stderr = $error;
+        return @fopen('php://stdout', 'w') ?: fopen('php://output', 'w');
     }
 
     /**
@@ -96,17 +58,6 @@ class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
      * @return bool
      */
     protected function hasStdoutSupport()
-    {
-        return false === $this->isRunningOS400();
-    }
-
-    /**
-     * Returns true if current environment supports writing console output to
-     * STDERR.
-     *
-     * @return bool
-     */
-    protected function hasStderrSupport()
     {
         return false === $this->isRunningOS400();
     }
@@ -131,20 +82,72 @@ class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
     /**
      * @return resource
      */
-    private function openOutputStream()
-    {
-        if (!$this->hasStdoutSupport()) {
-            return fopen('php://output', 'w');
-        }
-
-        return @fopen('php://stdout', 'w') ?: fopen('php://output', 'w');
-    }
-
-    /**
-     * @return resource
-     */
     private function openErrorStream()
     {
         return fopen($this->hasStderrSupport() ? 'php://stderr' : 'php://output', 'w');
+    }
+
+    /**
+     * Returns true if current environment supports writing console output to
+     * STDERR.
+     *
+     * @return bool
+     */
+    protected function hasStderrSupport()
+    {
+        return false === $this->isRunningOS400();
+    }
+
+    /**
+     * @param bool $decorated
+     */
+    public function setDecorated($decorated)
+    {
+        parent::setDecorated($decorated);
+        $this->stderr->setDecorated($decorated);
+    }
+
+    /**
+     * Creates a new output section.
+     *
+     * @return ConsoleSectionOutput
+     */
+    public function section()
+    {
+        return new ConsoleSectionOutput($this->getStream(), $this->consoleSectionOutputs, $this->getVerbosity(), $this->isDecorated(), $this->getFormatter());
+    }
+
+    /**
+     * @param OutputFormatterInterface $formatter
+     */
+    public function setFormatter(OutputFormatterInterface $formatter)
+    {
+        parent::setFormatter($formatter);
+        $this->stderr->setFormatter($formatter);
+    }
+
+    /**
+     * @param int $level
+     */
+    public function setVerbosity($level)
+    {
+        parent::setVerbosity($level);
+        $this->stderr->setVerbosity($level);
+    }
+
+    /**
+     * @return OutputInterface|StreamOutput
+     */
+    public function getErrorOutput()
+    {
+        return $this->stderr;
+    }
+
+    /**
+     * @param OutputInterface $error
+     */
+    public function setErrorOutput(OutputInterface $error)
+    {
+        $this->stderr = $error;
     }
 }

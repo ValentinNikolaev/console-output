@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__.'/Helper.php';
+
+require_once __DIR__ . '/Helper.php';
 
 /**
  * HelperSet represents a set of helpers to be used with a command.
@@ -10,7 +11,6 @@ class HelperSet implements \IteratorAggregate
      * @var Helper[]
      */
     private $helpers = array();
-    private $command;
 
     /**
      * @param Helper[] $helpers An array of helper
@@ -26,7 +26,7 @@ class HelperSet implements \IteratorAggregate
      * Sets a helper.
      *
      * @param HelperInterface $helper The helper instance
-     * @param string          $alias  An alias
+     * @param string $alias An alias
      */
     public function set(HelperInterface $helper, $alias = null)
     {
@@ -36,18 +36,6 @@ class HelperSet implements \IteratorAggregate
         }
 
         $helper->setHelperSet($this);
-    }
-
-    /**
-     * Returns true if the helper if defined.
-     *
-     * @param string $name The helper name
-     *
-     * @return bool true if the helper is defined, false otherwise
-     */
-    public function has($name)
-    {
-        return isset($this->helpers[$name]);
     }
 
     /**
@@ -68,23 +56,20 @@ class HelperSet implements \IteratorAggregate
         return $this->helpers[$name];
     }
 
-    public function setCommand(Command $command = null)
-    {
-        $this->command = $command;
-    }
-
     /**
-     * Gets the command associated with this helper set.
+     * Returns true if the helper if defined.
      *
-     * @return Command A Command instance
+     * @param string $name The helper name
+     *
+     * @return bool true if the helper is defined, false otherwise
      */
-    public function getCommand()
+    public function has($name)
     {
-        return $this->command;
+        return isset($this->helpers[$name]);
     }
 
     /**
-     * @return Helper[]
+     * @return ArrayIterator|Helper[]
      */
     public function getIterator()
     {
